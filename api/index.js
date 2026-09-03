@@ -4,15 +4,14 @@ import serverless from "serverless-http";
 import connectDB from "../server/config/db.js";
 
 import newsletterRoutes from "../server/routes/newsletterRoutes.js";
+import authRoutes from "../server/routes/authRoutes.js"; // <-- create this if missing
 
 const app = express();
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-// DO NOT block request with DB connection
 let dbConnected = false;
-
 app.use(async (req, res, next) => {
   if (!dbConnected) {
     dbConnected = true;
@@ -21,6 +20,7 @@ app.use(async (req, res, next) => {
   next();
 });
 
-app.use("/newsletter", newsletterRoutes);
+app.use("/api/newsletter", newsletterRoutes); // fixed prefix
+app.use("/api/auth", authRoutes);             // added
 
 export default serverless(app);
